@@ -12,6 +12,9 @@ function Game:start()
     self.ALLOW_JOIN = true
     self.NUM_PLAYERS = 0
 
+    self.NODES = {}
+    self.UI_ELEMENTS = {}
+
     self.TEXT = ''
     self.TIMER_TEXT = 0
     -- do settings loading here
@@ -98,7 +101,13 @@ end
 
 -- input = {btn, src, time_pressed, time_released}
 function Game:unresolved_input(input)
-    -- handling joining of new players
+    -- handling joining of keyboard player
+    if input.src == nil then
+        self:add_player(input.src)
+        return true
+    end
+
+    -- handling joining of new joystick players
     for i, player in ipairs(self.CONTROLLER.UNASSIGNED_PLAYERS) do
         if input.src == player.source and self.ALLOW_JOIN then
             self:add_player(input.src)
@@ -151,7 +160,7 @@ function Game:do_action(action, player)
         self.TEXT = self.TEXT .. ' [B] '
     end
     if action == self.CONTROLLER.OPT then
-        self.TEXT = self.TEXT .. ' [OPTIONS] '
+        self.TEXT = ''
     end
     if action == self.CONTROLLER.UP then
         self.TEXT = self.TEXT .. ' [UP] '

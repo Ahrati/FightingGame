@@ -8,23 +8,13 @@ function love.load()
     game:start()
 
     -- temp keyboard player
-    game:add_player(nil)
+    --game:add_player(nil)
     --
 
 end
 
 function love.update(dt)
     game:update(dt)
-
-    -- temp test with keyboard
-    --
-    local kb = game:get_player_by_source(nil)
-
-    for key, value in pairs(kb.actions) do
-        --print(value.btn)
-    end
-    --
-    --
 end
 
 function love.draw()
@@ -45,10 +35,6 @@ end
 
 function love.gamepadreleased(joystick, button)
     game.CONTROLLER:release_button(button, joystick)
-end
-
-function love.gamepadaxis(joystick, axis, value)
-    game.CONTROLLER:handle_axis(joystick, axis, value)
 end
 
 function love.joystickadded(joystick)

@@ -6,7 +6,7 @@ function Player:init()
     self.source = nil
     self.actions = {}
     self.type = nil
-    self.axis = {left_x = 0, left_y = 0}
+    self.deadzone = 0.3
 end
 
 function Player:update(dt)

@@ -4,6 +4,8 @@ function Controller:init()
     self.UNASSIGNED_PLAYERS = {}
     self.REGISTRY = {}
 
+    self.SELECTED_NODE = nil
+
     local joysticks = love.joystick.getJoysticks()
     if joysticks then
         self.UNASSIGNED_PLAYERS = joysticks
@@ -25,6 +27,8 @@ function Controller:init()
 
 end
 
+
+-- NEED TO ADD BUTTON HOLDING
 function Controller:press_button(button, source)
     local pressed = {
         btn = button, 
@@ -78,26 +82,15 @@ function Controller:joystick_disconnected(source)
     end
 end
 
-function Controller:update_axis(source, axis, value)
-    local player = game:get_player_by_source(source)
-    if player ~= nil then
-        if axis == love.joystick.GamepadAxis.leftx then
-            player.axis.left_x = value
-        end
-        if axis == love.joystick.GamepadAxis.lefty then
-            player.axis.left_y = value
-        end
-    end
-end
-
 function Controller:handle_axis(source)
     local player = game:get_player_by_source(source)
     if player ~= nil then
-        local left_x = player.axis.left_x
-        local left_y = player.axis.left_y
-        local axis = math.abs(left_x) > math.abs(left_y) and (left_x > 0 and 'dpright' or 'dpleft') or (left_y > 0 and 'dpdown' or 'dpup')
-        self:press_button(axis, source)
-        self:release_button(axis, source)
-        -- TO FIX: store previous axes on player, release only when changed, update how the updating of button presses and releases works
+        local left_x = player.source:getGamepadAxis('leftx')
+        local left_y = player.source:getGamepadAxis('lefty')
+        if math.abs(left_x) > player.deadzone or math.abs(left_y) > player.deadzone then
+            local axis = math.abs(left_x) > math.abs(left_y) and (left_x > 0 and 'dpright' or 'dpleft') or (left_y > 0 and 'dpdown' or 'dpup')
+            self:press_button(axis, source)
+            self:release_button(axis, source)
+        end
     end
 end
