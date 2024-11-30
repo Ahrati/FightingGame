@@ -7,9 +7,13 @@ function Player:init()
     self.actions = {}
 end
 
-function Player:set_binds(bind)
-end
-
 function Player:update(dt)
     -- do actions needed, save them for calculating combos
+    -- example:
+    for _, action in ipairs(self.actions) do
+        if action.executed == false then
+            action.executed = true
+            game:do_action(self.binding[action.e.btn], self)
+        end
+    end
 end

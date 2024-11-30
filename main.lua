@@ -21,14 +21,14 @@ function love.update(dt)
     local kb = game:get_player_by_source(nil)
 
     for key, value in pairs(kb.actions) do
-        print(value.btn)
+        --print(value.btn)
     end
     --
     --
-
 end
 
 function love.draw()
+    love.graphics.printf(game.TEXT, 200, 200, 200, "center")
 end
 
 function love.keypressed(key)
