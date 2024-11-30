@@ -60,6 +60,8 @@ function Game:add_player(source)
     player.source = source
 
     local type = source == nil and 'keyboard' or 'joystick'
+    player.type = type
+    
     for _, scheme in pairs(self.CONTROL_SCHEME) do
         if scheme.type == type then
             player.binding = scheme.inputs

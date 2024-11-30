@@ -22,9 +22,6 @@ function Controller:init()
     self.RB = 22
     self.OPT = 0
 
-    -- axis (will only take into account left stick) will be used like a button for now
-    self.axis = ''
-
 
 end
 
@@ -81,14 +78,26 @@ function Controller:joystick_disconnected(source)
     end
 end
 
-function Controller:handle_axis()
+function Controller:update_axis(source, axis, value)
+    local player = game:get_player_by_source(source)
+    if player ~= nil then
+        if axis == love.joystick.GamepadAxis.leftx then
+            player.axis.left_x = value
+        end
+        if axis == love.joystick.GamepadAxis.lefty then
+            player.axis.left_y = value
+        end
+    end
 end
 
-function Controller:update_axis()
-
-    --
-    --self.axis_buttons.l_stick.current = math.abs(l_stick_x) > math.abs(l_stick_y) and
-    --            (l_stick_x > 0 and 'dpright' or 'dpleft') or 
-    --            (l_stick_y > 0 and 'dpdown' or 'dpup')
-    
+function Controller:handle_axis(source)
+    local player = game:get_player_by_source(source)
+    if player ~= nil then
+        local left_x = player.axis.left_x
+        local left_y = player.axis.left_y
+        local axis = math.abs(left_x) > math.abs(left_y) and (left_x > 0 and 'dpright' or 'dpleft') or (left_y > 0 and 'dpdown' or 'dpup')
+        self:press_button(axis, source)
+        self:release_button(axis, source)
+        -- TO FIX: store previous axes on player, release only when changed, update how the updating of button presses and releases works
+    end
 end

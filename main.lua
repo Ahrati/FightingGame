@@ -47,6 +47,10 @@ function love.gamepadreleased(joystick, button)
     game.CONTROLLER:release_button(button, joystick)
 end
 
+function love.gamepadaxis(joystick, axis, value)
+    game.CONTROLLER:handle_axis(joystick, axis, value)
+end
+
 function love.joystickadded(joystick)
     game.CONTROLLER:joystick_connected(joystick)
 end
