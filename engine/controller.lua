@@ -22,9 +22,8 @@ function Controller:init()
     self.RB = 22
     self.OPT = 0
 
-    -- axis (will only take into account left stick)
-    self.x_axis = 0
-    self.y_axis = 0
+    -- axis (will only take into account left stick) will be used like a button for now
+    self.axis = ''
 
 
 end
@@ -53,7 +52,9 @@ function Controller:resolve_registry()
             if game:add_player_action(input, input.src) then
                 table.remove(self.REGISTRY, i)
             else
-                game:unresolved_input(input)
+                if game:unresolved_input(input) then
+                    game:add_player_action(input, input.src)
+                end
                 table.remove(self.REGISTRY, i)
             end
         end
@@ -68,7 +69,16 @@ function Controller:joystick_connected(source)
 end
 
 function Controller:joystick_disconnected(source)
-    -- check if it is from unassigned or existing players, remove
+    for i, player in ipairs(self.UNASSIGNED_PLAYERS) do
+        if player.source == source then
+            table.remove(self.UNASSIGNED_PLAYERS, i)
+        end
+    end
+    for i, player in ipairs(game.PLAYERS) do
+        if player.source == source then
+            table.remove(game.PLAYERS, i)
+        end
+    end
 end
 
 function Controller:handle_axis()

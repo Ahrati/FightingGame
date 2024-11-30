@@ -10,45 +10,44 @@ function Game:start()
     self.CONTROLLER = Controller()
 
     self.ALLOW_JOIN = true
+    self.NUM_PLAYERS = 0
 
     self.TEXT = ''
     self.TIMER_TEXT = 0
     -- do settings loading here
 
-    --temp
+
     self.CONTROL_SCHEME = {
         keyboard = {
-            default = true,
             type = 'keyboard',
             inputs = {
-                ['u'] = game.CONTROLLER.X,
-                ['i'] = game.CONTROLLER.Y,
-                ['j'] = game.CONTROLLER.A,
-                ['k'] = game.CONTROLLER.B,
-                ['w'] = game.CONTROLLER.UP,
-                ['s'] = game.CONTROLLER.DWN,
-                ['a'] = game.CONTROLLER.LFT,
-                ['d'] = game.CONTROLLER.RGT,
-                ['o'] = game.CONTROLLER.LB,
-                ['l'] = game.CONTROLLER.RB,
-                ['p'] = game.CONTROLLER.OPT,
+                ['u'] = self.CONTROLLER.X,
+                ['i'] = self.CONTROLLER.Y,
+                ['j'] = self.CONTROLLER.A,
+                ['k'] = self.CONTROLLER.B,
+                ['w'] = self.CONTROLLER.UP,
+                ['s'] = self.CONTROLLER.DWN,
+                ['a'] = self.CONTROLLER.LFT,
+                ['d'] = self.CONTROLLER.RGT,
+                ['o'] = self.CONTROLLER.LB,
+                ['l'] = self.CONTROLLER.RB,
+                ['p'] = self.CONTROLLER.OPT,
             }
         },
         joystick = {
-            default = true,
             type = 'joystick',
             inputs = {
-                ['x'] = game.CONTROLLER.X,
-                ['y'] = game.CONTROLLER.Y,
-                ['a'] = game.CONTROLLER.A,
-                ['b'] = game.CONTROLLER.B,
-                ['dpup'] = game.CONTROLLER.UP,
-                ['dpdown'] = game.CONTROLLER.DWN,
-                ['dpleft'] = game.CONTROLLER.LFT,
-                ['dpright'] = game.CONTROLLER.RGT,
-                ['leftshoulder'] = game.CONTROLLER.LB,
-                ['rightshoulder'] = game.CONTROLLER.RB,
-                ['start'] = game.CONTROLLER.OPT,
+                ['x'] = self.CONTROLLER.X,
+                ['y'] = self.CONTROLLER.Y,
+                ['a'] = self.CONTROLLER.A,
+                ['b'] = self.CONTROLLER.B,
+                ['dpup'] = self.CONTROLLER.UP,
+                ['dpdown'] = self.CONTROLLER.DWN,
+                ['dpleft'] = self.CONTROLLER.LFT,
+                ['dpright'] = self.CONTROLLER.RGT,
+                ['leftshoulder'] = self.CONTROLLER.LB,
+                ['rightshoulder'] = self.CONTROLLER.RB,
+                ['start'] = self.CONTROLLER.OPT,
             }
         },
     }
@@ -98,18 +97,26 @@ end
 -- input = {btn, src, time_pressed, time_released}
 function Game:unresolved_input(input)
     -- handling joining of new players
-    for _, player in ipairs(self.CONTROLLER.UNASSIGNED_PLAYERS) do
-        if input.src == player and self.ALLOW_JOIN then
+    for i, player in ipairs(self.CONTROLLER.UNASSIGNED_PLAYERS) do
+        if input.src == player.source and self.ALLOW_JOIN then
             self:add_player(input.src)
+            table.remove(self.CONTROLLER.UNASSIGNED_PLAYERS, i)
+            return true
         end
     end
-
+    return false
 end
 
 function Game:update(dt)
     
-    self.CONTROLLER:resolve_registry()
+    -- updating game variables
+    self.NUM_PLAYERS = table.getn(self.PLAYERS)
 
+
+
+    --
+
+    self.CONTROLLER:resolve_registry()
     
     for _, player in ipairs(self.PLAYERS) do
         player:update(dt)
@@ -119,9 +126,12 @@ function Game:update(dt)
         self.TEXT = ''
         self.TIMER_TEXT = 0
     end
-end
 
-function Game:get_sources()
+    --
+
+    if self.NUM_PLAYERS >= self.MAX_PLAYERS then
+        self.ALLOW_JOIN = false
+    end
 end
 
 -- Action should come in the form of self.CONTROLLER input enum
